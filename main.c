@@ -4,6 +4,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <unistd.h> // For usleep on Unix systems, not necessary.
 
 // --- Neural Network Definitions ---
 
@@ -409,10 +410,11 @@ int main() {
     int gameCycles = 0;
     char aiMove;
     while (true) {
+        usleep(200000); // <--- eats a whole 0.2s
         int reward = 0;
         // Prepare a 1200-byte input vector.
         unsigned char combinedInput[1200] = {0};
-        // For example, copy a short text ("s") into the input.
+        
         combinedInput[0] = 's';
         // Encode the environment (using player1's position here) into 9 bytes,
         // and copy it into combinedInput starting at offset 500.
@@ -422,7 +424,6 @@ int main() {
         gameCycles++;
         unsigned char *output = forward(nn, combinedInput);
 
-        // (In C# there was a check on output[^1] > 255; in C an unsigned char is 0–255.)
         printNetwork(nn);
         switchPlayer();
 
@@ -458,3 +459,5 @@ int main() {
     freeNeuralNetwork(nn);
     return 0;
 }
+
+// Yes, i did use AI to create AI, but i made the important logic.
